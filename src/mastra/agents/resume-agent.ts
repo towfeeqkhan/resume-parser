@@ -1,7 +1,7 @@
 import { Agent } from "@mastra/core/agent";
 import { z } from "zod";
 
-import { tokenHarbor } from "../models";
+import { tokenHarborVision } from "../models";
 
 export const resumeSchema = z.object({
   name: z.string(),
@@ -38,21 +38,39 @@ export const resumeAgent = new Agent({
   instructions: `
 You are a resume parsing assistant.
 
-Your job is to extract structured information from messy resume text.
+Your job is to extract structured information from resumes.
 
-Extract only information that is present in the provided resume.
+The resume may be provided as:
+- plain text
+- an image of a resume
 
-Do not invent or guess information.
+Extract only information that is actually present in the provided
+resume.
 
-If a field is not present, return an empty string.
+Do not invent, guess, or infer information that is not explicitly
+available.
 
-For education and experience, return an empty array when no information
-is available.
+If a field is not present or cannot be read, return an empty string.
 
-Keep descriptions concise while preserving the important information.
+For education and experience, return an empty array when no relevant
+information is available.
 
-Normalize the information into the required structured format.
+When reading a resume image:
+- Carefully inspect the entire image.
+- Read text from all visible sections.
+- Preserve important information while normalizing it into the
+  required structured format.
+- Do not confuse headings, labels, or decorative text with resume data.
+- If text is unclear or unreadable, do not guess it.
+
+For experience descriptions, keep them concise while preserving the
+important responsibilities, achievements, and technologies mentioned.
+
+For skills, extract individual skills rather than returning one
+combined sentence.
+
+Return information according to the provided structured schema.
 `,
 
-  model: tokenHarbor("gpt-6-luna-fast"),
+  model: tokenHarborVision("gpt-6-luna-fast"),
 });
